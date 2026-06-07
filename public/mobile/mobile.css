@@ -104,3 +104,10 @@ button {
   margin-top: 14px;
   min-height: 24px;
 }
+
+.presence {
+  margin-top: 8px;
+  margin-bottom: 0;
+  color: #8ac7ff;
+  font-size: 0.95rem;
+}

@@ -1,7 +1,9 @@
 const express = require("express");
 const cors = require("cors");
+const http = require("http");
 const multer = require("multer");
 const path = require("path");
+const { Server } = require("socket.io");
 const {
   buildUniqueFilePath,
   ensureUploadDirectory,
@@ -16,6 +18,7 @@ async function startServer() {
   const localIp = getLocalIpAddress();
   const port = await findAvailablePort(3030);
   const pin = generatePin();
+  const sessions = new Map();
 
   app.use(cors());
   app.use(express.json());
@@ -36,6 +39,42 @@ async function startServer() {
     }
   });
 
+  function buildSnapshot() {
+    return {
+      appName: "LocalDrop",
+      status: "active",
+      localIp,
+      port,
+      url: `http://${localIp}:${port}`,
+      mobileUrl: `http://${localIp}:${port}/mobile/`,
+      pin,
+      uploadDir,
+      connectedDevices: sessions.size,
+      files: listReceivedFiles(uploadDir)
+    };
+  }
+
+  function inferDeviceName(socket) {
+    const userAgent = socket.handshake.headers["user-agent"] || "";
+    if (/iphone/i.test(userAgent)) {
+      return "iPhone";
+    }
+    if (/ipad/i.test(userAgent)) {
+      return "iPad";
+    }
+    if (/android/i.test(userAgent)) {
+      return "Android";
+    }
+    return "dispositivo movil";
+  }
+
+  function broadcastPresence(message) {
+    io.emit("presence:update", {
+      connectedDevices: sessions.size,
+      message
+    });
+  }
+
   app.get("/", (_req, res) => {
     res.redirect("/mobile/");
   });
@@ -45,17 +84,7 @@ async function startServer() {
   });
 
   app.get("/api/info", (_req, res) => {
-    res.json({
-      appName: "LocalDrop",
-      status: "active",
-      localIp,
-      port,
-      url: `http://${localIp}:${port}`,
-      mobileUrl: `http://${localIp}:${port}/mobile/`,
-      pin,
-      uploadDir,
-      files: listReceivedFiles(uploadDir)
-    });
+    res.json(buildSnapshot());
   });
 
   app.post("/api/upload", (req, res, next) => {
@@ -81,6 +110,13 @@ async function startServer() {
       return;
     }
 
+    const deviceName = req.headers["x-localdrop-device-name"] || "dispositivo movil";
+    io.emit("upload:complete", {
+      deviceName,
+      files: listReceivedFiles(uploadDir)
+    });
+    broadcastPresence(`Ultima transferencia completada desde ${deviceName}.`);
+
     res.json({
       ok: true,
       uploaded: (req.files || []).map((file) => ({
@@ -90,9 +126,51 @@ async function startServer() {
     });
   });
 
-  const httpServer = await new Promise((resolve, reject) => {
-    const instance = app.listen(port, "0.0.0.0", () => resolve(instance));
-    instance.on("error", reject);
+  const httpServer = http.createServer(app);
+  const io = new Server(httpServer, {
+    cors: {
+      origin: "*"
+    }
+  });
+
+  io.on("connection", (socket) => {
+    const clientType = socket.handshake.query.clientType;
+
+    socket.emit("server:snapshot", buildSnapshot());
+
+    if (clientType === "mobile") {
+      const deviceName = inferDeviceName(socket);
+      sessions.set(socket.id, {
+        deviceName
+      });
+
+      socket.emit("presence:ack", { deviceName });
+      broadcastPresence(`${deviceName} conectado y listo para transferir.`);
+    }
+
+    socket.on("upload:started", ({ totalFiles }) => {
+      const session = sessions.get(socket.id);
+      const deviceName = session?.deviceName || "dispositivo movil";
+
+      io.emit("upload:started", {
+        deviceName,
+        totalFiles
+      });
+      broadcastPresence(`${deviceName} esta enviando ${totalFiles} archivo(s).`);
+    });
+
+    socket.on("disconnect", () => {
+      if (sessions.has(socket.id)) {
+        const { deviceName } = sessions.get(socket.id);
+        sessions.delete(socket.id);
+        broadcastPresence(`${deviceName} se desconecto.`);
+      }
+    });
+  });
+
+  await new Promise((resolve, reject) => {
+    httpServer.listen(port, "0.0.0.0", () => resolve());
+    httpServer.on("error", reject);
   });
 
   return {
@@ -102,13 +180,15 @@ async function startServer() {
     uploadDir,
     stop: () =>
       new Promise((resolve, reject) => {
-        httpServer.close((error) => {
-          if (error) {
-            reject(error);
-            return;
-          }
+        io.close(() => {
+          httpServer.close((error) => {
+            if (error) {
+              reject(error);
+              return;
+            }
 
-          resolve();
+            resolve();
+          });
         });
       })
   };

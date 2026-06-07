@@ -4,6 +4,7 @@ import ServerStatus from "./components/ServerStatus";
 import FileList from "./components/FileList";
 import SettingsPanel from "./components/SettingsPanel";
 import TitleBar from "./components/TitleBar";
+import { io } from "socket.io-client";
 
 function formatBytes(bytes) {
   if (!bytes) {
@@ -20,11 +21,24 @@ export default function App() {
   const [serverInfo, setServerInfo] = useState(null);
   const [qrDataUrl, setQrDataUrl] = useState("");
   const [error, setError] = useState("");
+  const [liveMessage, setLiveMessage] = useState("");
 
   useEffect(() => {
     let active = true;
+    let socket;
 
-    async function syncServerInfo() {
+    function enrichServerInfo(info, meta) {
+      return {
+        ...info,
+        uploadDir: meta.downloadsDir,
+        files: (info.files || []).map((file) => ({
+          ...file,
+          prettySize: formatBytes(file.size)
+        }))
+      };
+    }
+
+    async function bootstrapRealtime() {
       try {
         const meta = await window.localdrop.getMeta();
         const response = await fetch(`${meta.serverUrl}/api/info`).then((res) => res.json());
@@ -33,15 +47,75 @@ export default function App() {
           return;
         }
 
-        setServerInfo({
-          ...response,
-          uploadDir: meta.downloadsDir,
-          files: (response.files || []).map((file) => ({
-            ...file,
-            prettySize: formatBytes(file.size)
-          }))
-        });
+        setServerInfo(enrichServerInfo(response, meta));
         setError("");
+        setLiveMessage("Esperando que un celular abra el enlace");
+
+        socket = io(meta.socketUrl, {
+          transports: ["websocket", "polling"],
+          query: {
+            clientType: "desktop"
+          }
+        });
+
+        socket.on("connect", () => {
+          if (active) {
+            setError("");
+          }
+        });
+
+        socket.on("server:snapshot", (snapshot) => {
+          if (active) {
+            setServerInfo(enrichServerInfo(snapshot, meta));
+          }
+        });
+
+        socket.on("presence:update", (presence) => {
+          if (!active) {
+            return;
+          }
+
+          setServerInfo((current) =>
+            current
+              ? {
+                  ...current,
+                  connectedDevices: presence.connectedDevices
+                }
+              : current
+          );
+          setLiveMessage(presence.message);
+        });
+
+        socket.on("upload:complete", ({ files, deviceName }) => {
+          if (!active) {
+            return;
+          }
+
+          setServerInfo((current) =>
+            current
+              ? {
+                  ...current,
+                  files: files.map((file) => ({
+                    ...file,
+                    prettySize: formatBytes(file.size)
+                  }))
+                }
+              : current
+          );
+          setLiveMessage(`Transferencia completada desde ${deviceName}.`);
+        });
+
+        socket.on("upload:started", ({ deviceName, totalFiles }) => {
+          if (active) {
+            setLiveMessage(`${deviceName} esta subiendo ${totalFiles} archivo(s).`);
+          }
+        });
+
+        socket.on("disconnect", () => {
+          if (active) {
+            setLiveMessage("La sesion en tiempo real se desconecto. Reintentando...");
+          }
+        });
       } catch (fetchError) {
         if (active) {
           setError("No se pudo conectar con el servidor local.");
@@ -49,12 +123,13 @@ export default function App() {
       }
     }
 
-    syncServerInfo();
-    const interval = setInterval(syncServerInfo, 2500);
+    bootstrapRealtime();
 
     return () => {
       active = false;
-      clearInterval(interval);
+      if (socket) {
+        socket.disconnect();
+      }
     };
   }, []);
 
@@ -106,6 +181,8 @@ export default function App() {
           url={serverInfo?.mobileUrl}
           pin={serverInfo?.pin}
           error={error}
+          connectedDevices={serverInfo?.connectedDevices || 0}
+          liveMessage={liveMessage}
         />
       </section>
 

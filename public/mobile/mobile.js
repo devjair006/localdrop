@@ -3,6 +3,27 @@ const pinInput = document.getElementById("pin");
 const filesInput = document.getElementById("files");
 const progressBar = document.getElementById("progress-bar");
 const statusNode = document.getElementById("status");
+const presenceNode = document.getElementById("presence");
+let deviceName = "dispositivo movil";
+const socket = window.io({
+  transports: ["websocket", "polling"],
+  query: {
+    clientType: "mobile"
+  }
+});
+
+socket.on("connect", () => {
+  presenceNode.textContent = "Celular conectado a la sesion LocalDrop.";
+});
+
+socket.on("server:snapshot", (snapshot) => {
+  presenceNode.textContent = `Conectado a ${snapshot.appName}. PIN activo listo para validar.`;
+});
+
+socket.on("presence:ack", ({ deviceName }) => {
+  deviceName = deviceName || "dispositivo movil";
+  presenceNode.textContent = `${deviceName} vinculado con la app de escritorio.`;
+});
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -20,6 +41,10 @@ form.addEventListener("submit", (event) => {
   const xhr = new XMLHttpRequest();
   xhr.open("POST", "/api/upload");
   xhr.setRequestHeader("x-localdrop-pin", pinInput.value.trim());
+  xhr.setRequestHeader("x-localdrop-device-name", deviceName);
+  statusNode.textContent = "Validando PIN y preparando transferencia...";
+  progressBar.style.width = "0%";
+  socket.emit("upload:started", { totalFiles: filesInput.files.length });
 
   xhr.upload.addEventListener("progress", (progressEvent) => {
     if (!progressEvent.lengthComputable) {
@@ -54,4 +79,8 @@ form.addEventListener("submit", (event) => {
   });
 
   xhr.send(formData);
+});
+
+socket.on("disconnect", () => {
+  presenceNode.textContent = "Conexion en tiempo real perdida. Reintentando...";
 });

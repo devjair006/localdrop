@@ -151,6 +151,24 @@ h1 {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.live-status {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.live-status span {
+  color: #9eacbd;
+  font-size: 0.92rem;
+}
+
+.live-status strong {
+  color: #f4f7fb;
+  font-size: 0.98rem;
+}
+
 .pin-block strong {
   font-size: 2rem;
   letter-spacing: 0.18em;

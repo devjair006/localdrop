@@ -40,7 +40,8 @@ app.whenReady().then(async () => {
 
   ipcMain.handle("localdrop:get-meta", () => ({
     downloadsDir: serverContext.uploadDir,
-    serverUrl: `http://127.0.0.1:${serverContext.port}`
+    serverUrl: `http://127.0.0.1:${serverContext.port}`,
+    socketUrl: `http://127.0.0.1:${serverContext.port}`
   }));
 
   ipcMain.handle("localdrop:open-folder", async () => {

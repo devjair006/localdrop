@@ -8,7 +8,10 @@ export default function ServerStatus({ status, url, pin, error }) {
       <p>{error || url || "Iniciando..."}</p>
       <div className="pin-block">
         <span>PIN temporal</span>
-        <strong>{pin || "-- ----"}</strong>
+        <div className="pin-number">
+
+        <strong className="pin-code">{pin || "-- ----"}</strong>
+        </div>
       </div>
     </article>
   );

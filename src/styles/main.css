@@ -54,7 +54,7 @@ button {
   font-size: 0.85rem;
   letter-spacing: 0.10em;
   text-transform: uppercase;
-  font-family: "Archivo Black", sans-serif;
+  font-family: "Jost", sans-serif;
 }
 
 h1,
@@ -98,13 +98,17 @@ h1 {
   padding: 8px 12px;
   border-radius: 999px;
   background: rgba(107, 255, 176, 0.14);
-  color: #87f0b7;
+  color: #b3e4c9;
   font-size: 0.85rem;
+  letter-spacing: 0.10em;
+  font-family: "Jost", sans-serif;
 }
 
 .status-card.inactive .status-pill {
   background: rgba(255, 183, 77, 0.16);
   color: #ffd394;
+  letter-spacing: 0.10em;
+  font-family: "Jost", sans-serif;
 }
 
 .pin-block {

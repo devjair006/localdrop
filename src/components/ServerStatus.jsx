@@ -3,7 +3,7 @@ export default function ServerStatus({ status, url, pin, error }) {
 
   return (
     <article className={`status-card ${active ? "active" : "inactive"}`}>
-      <div className="status-pill">{active ? "Servidor activo" : "Servidor inactivo"}</div>
+      <div className="status-pill"><strong>{active ? "Servidor activo" : "Servidor inactivo"}</strong></div>
       <h2>{active ? "Listo para recibir archivos" : "Esperando servidor local"}</h2>
       <p>{error || url || "Iniciando..."}</p>
       <div className="pin-block">

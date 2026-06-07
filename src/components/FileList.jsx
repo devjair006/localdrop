@@ -1,11 +1,14 @@
 export default function FileList({ files, onOpenFolder }) {
   return (
     <section className="card file-list">
+      <div className="section-headline compact">
+        <span className="section-kicker">Recent intake</span>
+        <h2>Recibidos recientemente</h2>
+        <p>{files.length} archivo(s) registrados en esta sesion.</p>
+      </div>
+
       <div className="card-header">
-        <div>
-          <h2>Archivos recibidos</h2>
-          <span>{files.length} archivo(s) en esta sesion</span>
-        </div>
+        <div />
         <button className="secondary-button" onClick={onOpenFolder} type="button">
           Abrir carpeta
         </button>

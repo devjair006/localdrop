@@ -1,4 +1,4 @@
-const { app, BrowserWindow, shell, ipcMain, Menu } = require("electron");
+const { app, BrowserWindow, shell, ipcMain, Menu, dialog } = require("electron");
 const path = require("path");
 const { startServer } = require("../server/server");
 
@@ -38,11 +38,39 @@ app.whenReady().then(async () => {
 
   Menu.setApplicationMenu(null);
 
-  ipcMain.handle("localdrop:get-meta", () => ({
-    downloadsDir: serverContext.uploadDir,
-    serverUrl: `http://127.0.0.1:${serverContext.port}`,
-    socketUrl: `http://127.0.0.1:${serverContext.port}`
-  }));
+  ipcMain.handle("localdrop:get-meta", () => {
+    const snapshot = serverContext.getSnapshot();
+
+    return {
+      downloadsDir: serverContext.uploadDir,
+      serverUrl: `http://127.0.0.1:${serverContext.port}`,
+      socketUrl: `http://127.0.0.1:${serverContext.port}`,
+      hostnameUrl: snapshot.hostnameUrl,
+      discoveryStatus: snapshot.discoveryStatus,
+      serviceName: snapshot.serviceName
+    };
+  });
+
+  ipcMain.handle("localdrop:create-outbound-transfer", async (_event, targetSessionId) => {
+    const result = await dialog.showOpenDialog({
+      title: "Selecciona archivos para enviar al celular",
+      properties: ["openFile", "multiSelections"]
+    });
+
+    if (result.canceled || !result.filePaths.length) {
+      return {
+        canceled: true
+      };
+    }
+
+    return {
+      canceled: false,
+      transfer: serverContext.createOutboundTransfer({
+        targetSessionId,
+        filePaths: result.filePaths
+      })
+    };
+  });
 
   ipcMain.handle("localdrop:open-folder", async () => {
     await shell.openPath(serverContext.uploadDir);

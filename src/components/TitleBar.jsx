@@ -24,7 +24,6 @@ export default function TitleBar() {
   const handleAction = (action) => {
     setActiveMenu(null);
     if (!window.localdrop) {
-      console.warn("Electron context not available for:", action);
       return;
     }
 
@@ -52,8 +51,8 @@ export default function TitleBar() {
   return (
     <header className="titlebar" ref={titlebarRef}>
       <div className="titlebar-left">
-        <div className="titlebar-brand">LocalDrop</div>
-        
+        <div className="titlebar-brand">Control room</div>
+
         <nav className="titlebar-menu">
           <div className="menu-item">
             <button
@@ -99,7 +98,11 @@ export default function TitleBar() {
           </div>
         </nav>
       </div>
-      {/* Right side remains empty to accommodate Electron's overlay window controls */}
+
+      <div className="titlebar-right">
+        <span>WiFi local</span>
+        <strong>Desktop relay</strong>
+      </div>
     </header>
   );
 }

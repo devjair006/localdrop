@@ -88,12 +88,14 @@ export default function App() {
       <section className="hero">
         <div>
           <span className="eyebrow">Transferencia de archivos por WiFi en red local</span>
-          <h1>LocalDrop</h1>
+          <h1 className="title">LocalDrop</h1>
           <p>
-            <strong className="share-text">
-              Comparte archivos por WiFi local desde cualquier celular, sin nube,
-            sin login y sin cables.
-            </strong>
+            <div className="share-container">
+              <strong className="share-text">
+                Comparte archivos por WiFi local desde cualquier celular, sin nube,
+              sin login y sin cables.
+              </strong>
+            </div>
           </p>
         </div>
         <ServerStatus

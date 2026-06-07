@@ -104,6 +104,17 @@ h1 {
   font-family: "Jost", sans-serif;
 }
 
+.share-container {
+  margin-top: 6%;
+  justify-content: center;
+}
+
+.share-text {
+  margin-top: 10%;
+  letter-spacing: 0.05em;
+  font-family: "Jost", sans-serif;
+}
+
 .status-card.inactive .status-pill {
   background: rgba(255, 183, 77, 0.16);
   color: #ffd394;

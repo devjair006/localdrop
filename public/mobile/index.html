@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enviar archivos a LocalDrop</title>
+    <link rel="stylesheet" href="/mobile/mobile.css" />
+  </head>
+  <body>
+    <main class="mobile-shell">
+      <section class="mobile-card">
+        <span class="badge">LocalDrop</span>
+        <h1>Enviar archivos a LocalDrop</h1>
+        <p>Ingresa el PIN temporal de la app de escritorio y sube uno o varios archivos.</p>
+
+        <form id="upload-form">
+          <label>
+            PIN temporal
+            <input id="pin" name="pin" inputmode="numeric" maxlength="6" placeholder="123456" required />
+          </label>
+
+          <label>
+            Archivos
+            <input id="files" name="files" type="file" multiple required />
+          </label>
+
+          <button type="submit">Subir archivos</button>
+        </form>
+
+        <div class="progress-wrap">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <p class="status" id="status">Esperando seleccion de archivos.</p>
+      </section>
+    </main>
+
+    <script src="/mobile/mobile.js"></script>
+  </body>
+  </html>

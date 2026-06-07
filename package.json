@@ -1,0 +1,29 @@
+{
+  "name": "localdrop",
+  "version": "0.1.0",
+  "description": "Local file transfer over WiFi with Electron, React and Express.",
+  "main": "electron/main.js",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:ui\" \"npm:dev:electron\"",
+    "dev:ui": "vite",
+    "dev:electron": "wait-on tcp:5173 && electron .",
+    "build": "vite build",
+    "start": "electron ."
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "electron": "^31.0.2",
+    "express": "^4.19.2",
+    "multer": "^2.0.2",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "concurrently": "^9.0.1",
+    "vite": "^5.4.10",
+    "wait-on": "^8.0.1"
+  }
+}

@@ -13,6 +13,12 @@ async function createWindow() {
     minWidth: 960,
     minHeight: 700,
     backgroundColor: "#101418",
+    titleBarStyle: "hidden",
+    titleBarOverlay: {
+      color: "#0c1117",
+      symbolColor: "#f4f7fb",
+      height: 40
+    },
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -30,43 +36,7 @@ async function createWindow() {
 app.whenReady().then(async () => {
   serverContext = await startServer();
 
-  const menuTemplate = [
-    {
-      label: "Archivo",
-      submenu: [
-        { label: "Salir", role: "quit" }
-      ]
-    },
-    {
-      label: "Editar",
-      submenu: [
-        { label: "Deshacer", role: "undo" },
-        { label: "Rehacer", role: "redo" },
-        { type: "separator" },
-        { label: "Cortar", role: "cut" },
-        { label: "Copiar", role: "copy" },
-        { label: "Pegar", role: "paste" },
-        { label: "Seleccionar todo", role: "selectAll" }
-      ]
-    },
-    {
-      label: "Ver",
-      submenu: [
-        { label: "Recargar", role: "reload" },
-        { label: "Forzar recarga", role: "forceReload" },
-        ...(isDev ? [{ label: "Herramientas de desarrollo", role: "toggleDevTools" }] : []),
-        { type: "separator" },
-        { label: "Restablecer zoom", role: "resetZoom" },
-        { label: "Acercar", role: "zoomIn" },
-        { label: "Alejar", role: "zoomOut" },
-        { type: "separator" },
-        { label: "Pantalla completa", role: "togglefullscreen" }
-      ]
-    }
-  ];
-
-  const menu = Menu.buildFromTemplate(menuTemplate);
-  Menu.setApplicationMenu(menu);
+  Menu.setApplicationMenu(null);
 
   ipcMain.handle("localdrop:get-meta", () => ({
     downloadsDir: serverContext.uploadDir,
@@ -76,6 +46,22 @@ app.whenReady().then(async () => {
   ipcMain.handle("localdrop:open-folder", async () => {
     await shell.openPath(serverContext.uploadDir);
     return serverContext.uploadDir;
+  });
+
+  ipcMain.handle("localdrop:quit", () => {
+    app.quit();
+  });
+
+  ipcMain.handle("localdrop:toggle-devtools", () => {
+    if (mainWindow) {
+      mainWindow.webContents.toggleDevTools();
+    }
+  });
+
+  ipcMain.handle("localdrop:toggle-fullscreen", () => {
+    if (mainWindow) {
+      mainWindow.setFullScreen(!mainWindow.isFullScreen());
+    }
   });
 
   await createWindow();

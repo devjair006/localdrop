@@ -3,6 +3,7 @@ import QRCard from "./components/QRCard";
 import ServerStatus from "./components/ServerStatus";
 import FileList from "./components/FileList";
 import SettingsPanel from "./components/SettingsPanel";
+import TitleBar from "./components/TitleBar";
 
 function formatBytes(bytes) {
   if (!bytes) {
@@ -84,7 +85,9 @@ export default function App() {
   }, [serverInfo?.mobileUrl]);
 
   return (
-    <main className="shell">
+    <>
+      <TitleBar />
+      <main className="shell">
       <section className="hero">
         <div>
           <span className="eyebrow">Transferencia de archivos por WiFi en red local</span>
@@ -117,5 +120,6 @@ export default function App() {
 
       <FileList files={serverInfo?.files || []} onOpenFolder={() => window.localdrop.openFolder()} />
     </main>
+    </>
   );
 }

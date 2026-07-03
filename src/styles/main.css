@@ -639,6 +639,21 @@ h1 {
   text-align: center;
 }
 
+.primary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.send-to-phone .progress-wrap {
+  margin-top: 16px;
+}
+
+.send-status .status {
+  margin-top: 10px;
+  color: #9eacbd;
+}
+}
+
 .file-table {
   display: grid;
   gap: 12px;

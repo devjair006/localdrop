@@ -3,6 +3,7 @@ import { io } from "socket.io-client";
 import QRCard from "./components/QRCard";
 import ServerStatus from "./components/ServerStatus";
 import FileList from "./components/FileList";
+import SendToPhone from "./components/SendToPhone";
 import SettingsPanel from "./components/SettingsPanel";
 import TitleBar from "./components/TitleBar";
 
@@ -996,6 +997,11 @@ export default function App() {
               <FileList
                 files={serverInfo?.files || []}
                 onOpenFolder={() => window.localdrop.openFolder()}
+              />
+
+              <SendToPhone
+                serverUrl={serverInfo?.url || serverInfo?.mobileUrl?.replace(/\/mobile\/?$/, "")}
+                pin={serverInfo?.pin}
               />
             </div>
 

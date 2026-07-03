@@ -4,7 +4,9 @@ const filesInput = document.getElementById("files");
 const progressBar = document.getElementById("progress-bar");
 const statusNode = document.getElementById("status");
 const presenceNode = document.getElementById("presence");
+const sharedListNode = document.getElementById("shared-list");
 let deviceName = "dispositivo movil";
+let currentPin = "";
 const socket = window.io({
   transports: ["websocket", "polling"],
   query: {
@@ -18,6 +20,7 @@ socket.on("connect", () => {
 
 socket.on("server:snapshot", (snapshot) => {
   presenceNode.textContent = `Conectado a ${snapshot.appName}. PIN activo listo para validar.`;
+  renderSharedFiles(snapshot.sharedFiles);
 });
 
 socket.on("presence:ack", ({ deviceName }) => {
@@ -25,8 +28,64 @@ socket.on("presence:ack", ({ deviceName }) => {
   presenceNode.textContent = `${deviceName} vinculado con la app de escritorio.`;
 });
 
+pinInput.addEventListener("input", () => {
+  currentPin = pinInput.value.trim();
+});
+
+function formatBytes(bytes) {
+  if (!bytes) {
+    return "0 B";
+  }
+
+  const units = ["B", "KB", "MB", "GB"];
+  const exponent = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+  const value = bytes / 1024 ** exponent;
+  return `${value.toFixed(value >= 10 || exponent === 0 ? 0 : 1)} ${units[exponent]}`;
+}
+
+function renderSharedFiles(files) {
+  if (!files?.length) {
+    sharedListNode.innerHTML = '<li class="shared-empty">No hay archivos compartidos aun.</li>';
+    return;
+  }
+
+  sharedListNode.innerHTML = files.map((file) => `
+    <li class="shared-item">
+      <div class="shared-item-info">
+        <span class="shared-item-name">${file.name}</span>
+        <span class="shared-item-size">${formatBytes(file.size)}</span>
+      </div>
+      <button type="button" data-filename="${file.name}">Descargar</button>
+    </li>
+  `).join("");
+
+  sharedListNode.querySelectorAll("button").forEach((button) => {
+    button.addEventListener("click", () => {
+      downloadSharedFile(button.dataset.filename);
+    });
+  });
+}
+
+function downloadSharedFile(fileName) {
+  if (!currentPin) {
+    statusNode.textContent = "Ingresa el PIN para descargar archivos del PC.";
+    return;
+  }
+
+  const encodedName = encodeURIComponent(fileName);
+  const downloadUrl = `/api/shared-files/download/${encodedName}?pin=${encodeURIComponent(currentPin)}`;
+  const link = document.createElement("a");
+  link.href = downloadUrl;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  statusNode.textContent = `Descargando ${fileName}...`;
+}
+
 form.addEventListener("submit", (event) => {
   event.preventDefault();
+  currentPin = pinInput.value.trim();
 
   if (!filesInput.files.length) {
     statusNode.textContent = "Selecciona al menos un archivo.";
@@ -47,6 +106,7 @@ form.addEventListener("submit", (event) => {
   socket.emit("upload:started", { totalFiles: filesInput.files.length });
 
   let startTime = Date.now();
+  let lastProgressEmit = 0;
 
   xhr.upload.addEventListener("progress", (progressEvent) => {
     if (!progressEvent.lengthComputable) {
@@ -70,6 +130,12 @@ form.addEventListener("submit", (event) => {
     }
 
     statusNode.textContent = `Subiendo... ${percent}% (${speedFormatted})`;
+
+    const now = Date.now();
+    if (now - lastProgressEmit < 250) {
+      return;
+    }
+    lastProgressEmit = now;
 
     socket.emit("upload:progress", {
       progress: percent,

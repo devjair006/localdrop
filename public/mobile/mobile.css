@@ -111,3 +111,69 @@ button {
   color: #8ac7ff;
   font-size: 0.95rem;
 }
+
+.shared-files-section {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.shared-files-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
+
+.shared-hint {
+  color: #9eacbd;
+  font-size: 0.95rem;
+  margin-bottom: 14px;
+}
+
+.shared-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.shared-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.shared-item-info {
+  display: grid;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.shared-item-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shared-item-size {
+  color: #9eacbd;
+  font-size: 0.85rem;
+}
+
+.shared-item button {
+  flex: none;
+  width: auto;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+}
+
+.shared-empty {
+  color: #9eacbd;
+  text-align: center;
+  padding: 18px 0;
+}

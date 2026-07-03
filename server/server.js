@@ -31,6 +31,26 @@ async function startServer() {
     });
   }
 
+  function requirePin(req, res, next) {
+    const submittedPin = req.query.pin || req.headers["x-localdrop-pin"];
+
+    if (!isValidPin(submittedPin, pin)) {
+      res.status(401).json({
+        ok: false,
+        error: "PIN invalido. Verifica el codigo temporal en la app."
+      });
+      return;
+    }
+
+    next();
+  }
+
+  function isInsideSharedDir(filePath) {
+    const resolvedFile = path.resolve(filePath);
+    const resolvedShared = path.resolve(sharedDir);
+    return resolvedFile.startsWith(resolvedShared + path.sep);
+  }
+
   const localIp = getLocalIpAddress();
   const port = await findAvailablePort(3030);
   const pin = generatePin();
@@ -80,8 +100,10 @@ async function startServer() {
       mobileUrl: `http://${localIp}:${port}/mobile/`,
       pin,
       uploadDir,
+      sharedDir,
       connectedDevices: sessions.size,
-      files: listReceivedFiles(uploadDir)
+      files: listReceivedFiles(uploadDir),
+      sharedFiles: listSharedFiles(sharedDir)
     };
   }
 
@@ -118,26 +140,16 @@ async function startServer() {
     res.json(buildSnapshot());
   });
 
-  app.get("/api/shared-files", (_req, res) => {
+  app.get("/api/shared-files", requirePin, (_req, res) => {
     res.json(listSharedFiles(sharedDir));
   });
 
-  app.get("/api/shared-files/download/:filename", (req, res) => {
-    const submittedPin = req.query.pin || req.headers["x-localdrop-pin"];
-
-    if (!isValidPin(submittedPin, pin)) {
-      res.status(401).json({
-        ok: false,
-        error: "PIN invalido. Verifica el codigo temporal en la app."
-      });
-      return;
-    }
-
+  app.get("/api/shared-files/download/:filename", requirePin, (req, res) => {
     const { filename } = req.params;
     const safeName = sanitizeFileName(filename);
     const filePath = path.join(sharedDir, safeName);
 
-    if (!fs.existsSync(filePath)) {
+    if (!isInsideSharedDir(filePath) || !fs.existsSync(filePath)) {
       res.status(404).json({
         ok: false,
         error: "Archivo no encontrado."
@@ -148,7 +160,7 @@ async function startServer() {
     res.download(filePath, safeName);
   });
 
-  app.post("/api/shared-files", uploadShared.array("files"), (req, res) => {
+  app.post("/api/shared-files", requirePin, uploadShared.array("files"), (req, res) => {
     if (!req.files?.length) {
       res.status(400).json({
         ok: false,
@@ -156,6 +168,8 @@ async function startServer() {
       });
       return;
     }
+
+    io.emit("server:snapshot", buildSnapshot());
 
     res.json({
       ok: true,

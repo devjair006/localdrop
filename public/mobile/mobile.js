@@ -46,6 +46,8 @@ form.addEventListener("submit", (event) => {
   progressBar.style.width = "0%";
   socket.emit("upload:started", { totalFiles: filesInput.files.length });
 
+  let startTime = Date.now();
+
   xhr.upload.addEventListener("progress", (progressEvent) => {
     if (!progressEvent.lengthComputable) {
       return;
@@ -53,7 +55,26 @@ form.addEventListener("submit", (event) => {
 
     const percent = Math.round((progressEvent.loaded / progressEvent.total) * 100);
     progressBar.style.width = `${percent}%`;
-    statusNode.textContent = `Subiendo... ${percent}%`;
+
+    const elapsedTime = (Date.now() - startTime) / 1000;
+    let speedFormatted = "0 B/s";
+    if (elapsedTime > 0) {
+      const speed = progressEvent.loaded / elapsedTime;
+      if (speed < 1024) {
+        speedFormatted = `${speed.toFixed(0)} B/s`;
+      } else if (speed < 1024 * 1024) {
+        speedFormatted = `${(speed / 1024).toFixed(1)} KB/s`;
+      } else {
+        speedFormatted = `${(speed / (1024 * 1024)).toFixed(1)} MB/s`;
+      }
+    }
+
+    statusNode.textContent = `Subiendo... ${percent}% (${speedFormatted})`;
+
+    socket.emit("upload:progress", {
+      progress: percent,
+      speed: speedFormatted
+    });
   });
 
   xhr.addEventListener("load", () => {

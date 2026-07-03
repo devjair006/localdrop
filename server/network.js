@@ -3,16 +3,37 @@ const net = require("net");
 
 function getLocalIpAddress() {
   const interfaces = os.networkInterfaces();
+  let fallbackIp = "127.0.0.1";
 
-  for (const entries of Object.values(interfaces)) {
+  for (const [name, entries] of Object.entries(interfaces)) {
+    // llamaba por defecto a la ip de mi maquina virtual
+    const isVirtualName = name.toLowerCase().includes("vethernet") ||
+                          name.toLowerCase().includes("virtual") ||
+                          name.toLowerCase().includes("vmware") ||
+                          name.toLowerCase().includes("wsl");
+
     for (const entry of entries || []) {
       if (entry.family === "IPv4" && !entry.internal) {
-        return entry.address;
+        const macPrefix = entry.mac.substring(0, 8).toLowerCase();
+        const isVirtualMac = macPrefix === "00:15:5d" || // Hyper-V
+                             macPrefix === "08:00:27" || // VirtualBox
+                             macPrefix === "0a:00:27" || // VirtualBox
+                             macPrefix === "00:50:56" || // VMware
+                             macPrefix === "00:0c:29" || // VMware
+                             macPrefix === "00:05:69";   // VMware
+
+        if (!isVirtualName && !isVirtualMac) {
+          // Si no es virtual, preferimos este (Ej. "Wi-Fi" o "Ethernet")
+          return entry.address;
+        } else if (fallbackIp === "127.0.0.1") {
+          // Guardamos el virtual como fallback por si no hay otro
+          fallbackIp = entry.address;
+        }
       }
     }
   }
 
-  return "127.0.0.1";
+  return fallbackIp;
 }
 
 function findAvailablePort(startPort) {

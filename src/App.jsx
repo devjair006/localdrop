@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import QRCard from "./components/QRCard";
 import ServerStatus from "./components/ServerStatus";
 import FileList from "./components/FileList";
+import SendToPhone from "./components/SendToPhone";
 import SettingsPanel from "./components/SettingsPanel";
 import TitleBar from "./components/TitleBar";
 import { io } from "socket.io-client";
@@ -196,6 +197,7 @@ export default function App() {
       </section>
 
       <FileList files={serverInfo?.files || []} onOpenFolder={() => window.localdrop.openFolder()} />
+      <SendToPhone serverUrl={serverInfo?.url} pin={serverInfo?.pin} />
     </main>
     </>
   );

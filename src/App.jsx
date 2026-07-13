@@ -957,7 +957,7 @@ export default function App() {
       <div className="flex-1 flex flex-col min-w-0 rounded-[24px] md:rounded-[34px] bg-brand-dark shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_24px_64px_rgba(27,14,8,0.24)] overflow-hidden relative">
         <TitleBar />
         <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 pb-6 flex flex-col gap-5 min-w-0">
-          <section className="flex flex-col xl:flex-row items-stretch gap-6">
+          <section className="flex flex-col xl:flex-row xl:items-center items-stretch gap-6">
             <div className="flex-1 p-5 md:pt-4 md:px-2 md:pb-2">
               <span className="inline-flex px-3 py-2 rounded-full bg-white/10 text-primary-gold text-[0.78rem] tracking-widest uppercase">Transferencia local sin cuentas</span>
               <h1 className="mt-5 text-[clamp(2.8rem,4vw,5rem)] leading-[0.92] text-[#fff6ea] font-display max-w-[9ch]">Un relay visual para compartir por WiFi.</h1>
@@ -973,19 +973,23 @@ export default function App() {
                   className={`mode-tile tone-${tile.tone} flex flex-col justify-between min-h-[200px] gap-4 p-6 rounded-[28px] text-[#150b08] min-w-0`}
                   key={tile.id}
                 >
-                  <div className="flex items-start justify-between gap-3 w-full">
+                  <div className="mode-tile__header flex items-start justify-between gap-3 w-full">
+                    <span className="mode-tile__index shrink-0">{String(index + 1).padStart(2, "0")}</span>
                     <span className="mode-tile__eyebrow shrink min-w-0 text-center">{tile.eyebrow}</span>
-                    <span className="mode-tile__index shrink-0 ml-auto">{String(index + 1).padStart(2, "0")}</span>
                   </div>
 
-                  <div className="flex flex-col gap-2 min-w-0 text-center items-center justify-center flex-1 my-2">
-                    <h2 className="mode-tile__title break-words">{tile.title}</h2>
-                    <p className="mode-tile__body break-words">{tile.body}</p>
+                  <div className="mode-tile__details">
+                    <div className="flex flex-col gap-2 min-w-0 text-center items-center justify-center flex-1 my-2">
+                      <h2 className="mode-tile__title break-words">{tile.title}</h2>
+                      <p className="mode-tile__body break-words">{tile.body}</p>
+                    </div>
                   </div>
 
-                  <div className="mode-tile__meta min-w-0 justify-center text-center">
-                    <span className="mode-tile__dot" />
-                    <strong className="break-words">{tile.meta}</strong>
+                  <div className="mode-tile__meta">
+                    <div className="flex items-center justify-center gap-2 w-full">
+                      <span className="mode-tile__dot" />
+                      <strong className="break-words">{tile.meta}</strong>
+                    </div>
                   </div>
                 </article>
               ))}

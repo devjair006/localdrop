@@ -497,9 +497,9 @@ function OutboundTransferSection({
             </div>
 
             {transferSession ? (
-              <div className="flex flex-col text-left sm:text-right shrink-0">
+              <div className="flex flex-col text-left sm:text-right shrink-0 min-w-0">
                 <span className="text-[#a19286] text-sm">Destino</span>
-                <strong className="text-text-main truncate max-w-[200px]">
+                <strong className="text-text-main truncate max-w-[200px] min-w-0">
                   {transferSession.deviceName} - {transferSession.shortSessionId}
                 </strong>
               </div>
@@ -956,7 +956,7 @@ export default function App() {
 
       <div className="flex-1 flex flex-col min-w-0 rounded-[24px] md:rounded-[34px] bg-brand-dark shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_24px_64px_rgba(27,14,8,0.24)] overflow-hidden relative">
         <TitleBar />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-6 flex flex-col gap-5">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 pb-6 flex flex-col gap-5 min-w-0">
           <section className="flex flex-col xl:flex-row items-stretch gap-6">
             <div className="flex-1 p-5 md:pt-4 md:px-2 md:pb-2">
               <span className="inline-flex px-3 py-2 rounded-full bg-white/10 text-primary-gold text-[0.78rem] tracking-widest uppercase">Transferencia local sin cuentas</span>
@@ -967,13 +967,26 @@ export default function App() {
               </p>
             </div>
 
-            <div className="flex-[1.25] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {featureTiles.map((tile) => (
-                <article className={`flex flex-col justify-between min-h-[186px] gap-3 p-5 rounded-3xl text-[#150b08] shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] tone-${tile.tone}`} key={tile.id}>
-                  <span className="inline-flex w-fit px-2.5 py-1.5 rounded-full text-[0.74rem] tracking-wide bg-[#120909]/10">{tile.eyebrow}</span>
-                  <h2 className="text-xl md:text-2xl leading-tight font-bold">{tile.title}</h2>
-                  <p className="max-w-[24ch] leading-snug">{tile.body}</p>
-                  <strong className="text-sm">{tile.meta}</strong>
+            <div className="flex-[1.25] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 tiles-group">
+              {featureTiles.map((tile, index) => (
+                <article
+                  className={`mode-tile tone-${tile.tone} flex flex-col justify-between min-h-[200px] gap-4 p-6 rounded-[28px] text-[#150b08] min-w-0`}
+                  key={tile.id}
+                >
+                  <div className="flex items-start justify-between gap-3 w-full">
+                    <span className="mode-tile__eyebrow shrink min-w-0 text-center">{tile.eyebrow}</span>
+                    <span className="mode-tile__index shrink-0 ml-auto">{String(index + 1).padStart(2, "0")}</span>
+                  </div>
+
+                  <div className="flex flex-col gap-2 min-w-0 text-center items-center justify-center flex-1 my-2">
+                    <h2 className="mode-tile__title break-words">{tile.title}</h2>
+                    <p className="mode-tile__body break-words">{tile.body}</p>
+                  </div>
+
+                  <div className="mode-tile__meta min-w-0 justify-center text-center">
+                    <span className="mode-tile__dot" />
+                    <strong className="break-words">{tile.meta}</strong>
+                  </div>
                 </article>
               ))}
             </div>

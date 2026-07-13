@@ -62,13 +62,13 @@ export default function ServerStatus({
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 md:p-5 rounded-2xl bg-[#ff7248]/10 border border-[#ff7248]/20 text-[#ffb6a1]">
-        <span className="text-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 md:p-5 rounded-2xl bg-[#ff7248]/10 border border-[#ff7248]/20 text-[#ffb6a1] min-w-0">
+        <span className="text-sm min-w-0 sm:shrink-0">
           {connectedDevices
             ? `${connectedDevices} sesion(es) movil(es) conectada(s)`
             : "Sin sesiones moviles conectadas"}
         </span>
-        <strong className="text-sm truncate max-w-full sm:max-w-[50%] text-right">{liveMessage || "Esperando que un celular abra el enlace"}</strong>
+        <strong className="text-sm truncate max-w-full sm:max-w-[55%] min-w-0 text-left sm:text-right">{liveMessage || "Esperando que un celular abra el enlace"}</strong>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 rounded-2xl bg-white/5">

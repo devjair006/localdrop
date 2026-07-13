@@ -80,6 +80,7 @@ export default function SendToPhone({ serverUrl, pin }) {
   return (
     <section className="p-5 md:p-6 rounded-[26px] bg-[#1a1214] border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] flex flex-col gap-5">
       <div className="flex flex-col gap-1">
+        <span className="text-[#ffcf76] text-[0.74rem] tracking-[0.12em] uppercase">Envio · Carga HTTP directa</span>
         <h2 className="text-xl font-bold">Enviar al celular</h2>
         <span className="text-[#a19286] leading-relaxed">Selecciona archivos para enviarlos al telefono vinculado</span>
       </div>

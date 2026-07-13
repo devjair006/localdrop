@@ -412,7 +412,7 @@ function OutboundTransferSection({
   return (
     <section className="p-5 md:p-6 rounded-[26px] bg-[#1a1214] border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <span className="text-[#ffcf76] text-[0.74rem] tracking-[0.12em] uppercase">Desktop to mobile</span>
+        <span className="text-[#ffcf76] text-[0.74rem] tracking-[0.12em] uppercase">Envio · Relay por sesion</span>
         <h2 className="text-2xl font-bold">Enviar al celular</h2>
         <p className="text-[#bdaea0] leading-relaxed">Prepara una descarga para una sesion movil activa con un flujo claro y manual.</p>
       </div>

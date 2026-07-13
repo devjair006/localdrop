@@ -58,43 +58,43 @@ export default function TitleBar() {
         <div className="font-display text-sm font-bold tracking-wider text-text-main">Control room</div>
 
         <nav className="flex gap-1">
-          <div className="menu-item">
+          <div className="relative">
             <button
-              className={`menu-trigger ${activeMenu === "archivo" ? "active" : ""}`}
+              className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${activeMenu === "archivo" ? "bg-white/10 text-white" : "text-[#bdaea0] hover:bg-white/5 hover:text-white"}`}
               onClick={() => toggleMenu("archivo")}
             >
               Archivo
             </button>
             {activeMenu === "archivo" && (
-              <div className="menu-dropdown">
-                <button className="dropdown-btn" onClick={() => handleAction("open-folder")}>
+              <div className="absolute top-full left-0 mt-1 min-w-[180px] bg-[#2a1b18] border border-white/10 rounded-lg shadow-xl py-1 z-50 flex flex-col">
+                <button className="w-full text-left px-4 py-2 text-sm text-[#e6d5c3] hover:bg-white/10 hover:text-white transition-colors" onClick={() => handleAction("open-folder")}>
                   <span>Abrir descargas</span>
                 </button>
-                <div className="dropdown-divider" />
-                <button className="dropdown-btn" onClick={() => handleAction("quit")}>
+                <div className="h-px bg-white/10 my-1 w-full" />
+                <button className="w-full text-left px-4 py-2 text-sm text-[#e6d5c3] hover:bg-white/10 hover:text-white transition-colors" onClick={() => handleAction("quit")}>
                   <span>Salir</span>
                 </button>
               </div>
             )}
           </div>
 
-          <div className="menu-item">
+          <div className="relative">
             <button
-              className={`menu-trigger ${activeMenu === "ver" ? "active" : ""}`}
+              className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${activeMenu === "ver" ? "bg-white/10 text-white" : "text-[#bdaea0] hover:bg-white/5 hover:text-white"}`}
               onClick={() => toggleMenu("ver")}
             >
               Ver
             </button>
             {activeMenu === "ver" && (
-              <div className="menu-dropdown">
-                <button className="dropdown-btn" onClick={() => handleAction("reload")}>
+              <div className="absolute top-full left-0 mt-1 min-w-[180px] bg-[#2a1b18] border border-white/10 rounded-lg shadow-xl py-1 z-50 flex flex-col">
+                <button className="w-full text-left px-4 py-2 text-sm text-[#e6d5c3] hover:bg-white/10 hover:text-white transition-colors" onClick={() => handleAction("reload")}>
                   <span>Recargar</span>
                 </button>
-                <button className="dropdown-btn" onClick={() => handleAction("fullscreen")}>
+                <button className="w-full text-left px-4 py-2 text-sm text-[#e6d5c3] hover:bg-white/10 hover:text-white transition-colors" onClick={() => handleAction("fullscreen")}>
                   <span>Pantalla completa</span>
                 </button>
-                <div className="dropdown-divider" />
-                <button className="dropdown-btn" onClick={() => handleAction("devtools")}>
+                <div className="h-px bg-white/10 my-1 w-full" />
+                <button className="w-full text-left px-4 py-2 text-sm text-[#e6d5c3] hover:bg-white/10 hover:text-white transition-colors" onClick={() => handleAction("devtools")}>
                   <span>Herramientas de desarrollo</span>
                 </button>
               </div>
@@ -103,9 +103,9 @@ export default function TitleBar() {
         </nav>
       </div>
 
-      <div className="flex flex-col gap-0.5 items-end text-text-muted" style={{ WebkitAppRegion: 'no-drag' }}>
-        <span className="text-[0.7rem] uppercase tracking-wider">WiFi local</span>
-        <strong className="text-sm text-text-main">Desktop relay</strong>
+      <div className="flex flex-col gap-0.5 items-end text-[#bdaea0]" style={{ WebkitAppRegion: 'no-drag' }}>
+        <span className="text-[0.6rem] uppercase tracking-wider font-bold">WiFi local</span>
+        <strong className="text-xs text-text-main font-bold">Desktop relay</strong>
       </div>
     </header>
   );

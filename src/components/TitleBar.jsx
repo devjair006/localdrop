@@ -49,11 +49,15 @@ export default function TitleBar() {
   };
 
   return (
-    <header className="titlebar" ref={titlebarRef}>
-      <div className="titlebar-left">
-        <div className="titlebar-brand">Control room</div>
+    <header 
+      className="flex items-center justify-between h-10 px-4 bg-[#12090a]/92 backdrop-blur-[18px] border-b border-white/5 shrink-0 z-50 select-none"
+      style={{ WebkitAppRegion: 'drag' }}
+      ref={titlebarRef}
+    >
+      <div className="flex items-center gap-6" style={{ WebkitAppRegion: 'no-drag' }}>
+        <div className="font-display text-sm font-bold tracking-wider text-text-main">Control room</div>
 
-        <nav className="titlebar-menu">
+        <nav className="flex gap-1">
           <div className="menu-item">
             <button
               className={`menu-trigger ${activeMenu === "archivo" ? "active" : ""}`}
@@ -99,9 +103,9 @@ export default function TitleBar() {
         </nav>
       </div>
 
-      <div className="titlebar-right">
-        <span>WiFi local</span>
-        <strong>Desktop relay</strong>
+      <div className="flex flex-col gap-0.5 items-end text-text-muted" style={{ WebkitAppRegion: 'no-drag' }}>
+        <span className="text-[0.7rem] uppercase tracking-wider">WiFi local</span>
+        <strong className="text-sm text-text-main">Desktop relay</strong>
       </div>
     </header>
   );

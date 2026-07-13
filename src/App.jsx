@@ -920,8 +920,8 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell">
-      <aside className="app-rail">
+    <div className="h-screen w-full flex overflow-hidden bg-brand-accent p-3 md:p-5 md:gap-4 text-text-main">
+      <aside className="hidden md:flex flex-col justify-between shrink-0 w-[212px] p-7 rounded-[30px] bg-brand-rail text-text-soft shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
         <div>
           <div className="rail-brand">
             <span className="rail-dot" />
@@ -944,33 +944,33 @@ export default function App() {
         </div>
       </aside>
 
-      <div className="content-shell">
+      <div className="flex-1 flex flex-col min-w-0 rounded-[24px] md:rounded-[34px] bg-brand-dark shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_24px_64px_rgba(27,14,8,0.24)] overflow-hidden relative">
         <TitleBar />
-        <main className="shell">
-          <section className="hero-board">
-            <div className="hero-copy-block">
-              <span className="eyebrow">Transferencia local sin cuentas</span>
-              <h1 className="title">Un relay visual para compartir por WiFi.</h1>
-              <p className="hero-copy">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-6 flex flex-col gap-5">
+          <section className="flex flex-col xl:flex-row items-stretch gap-6">
+            <div className="flex-1 p-5 md:pt-4 md:px-2 md:pb-2">
+              <span className="inline-flex px-3 py-2 rounded-full bg-white/10 text-primary-gold text-[0.78rem] tracking-widest uppercase">Transferencia local sin cuentas</span>
+              <h1 className="mt-5 text-[clamp(2.8rem,4vw,5rem)] leading-[0.92] text-[#fff6ea] font-display max-w-[9ch]">Un relay visual para compartir por WiFi.</h1>
+              <p className="max-w-[54ch] mt-5 text-text-muted text-[1.02rem] leading-relaxed tracking-wide">
                 LocalDrop convierte tu laptop en un panel de intercambio con QR, PIN temporal,
                 sesiones vivas y descargas directas al celular con una estetica editorial.
               </p>
             </div>
 
-            <div className="feature-grid">
+            <div className="flex-[1.25] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {featureTiles.map((tile) => (
-                <article className={`feature-tile tone-${tile.tone}`} key={tile.id}>
-                  <span>{tile.eyebrow}</span>
-                  <h2>{tile.title}</h2>
-                  <p>{tile.body}</p>
-                  <strong>{tile.meta}</strong>
+                <article className={`flex flex-col justify-between min-h-[186px] gap-3 p-5 rounded-3xl text-[#150b08] shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] tone-${tile.tone}`} key={tile.id}>
+                  <span className="inline-flex w-fit px-2.5 py-1.5 rounded-full text-[0.74rem] tracking-wide bg-[#120909]/10">{tile.eyebrow}</span>
+                  <h2 className="text-xl md:text-2xl leading-tight font-bold">{tile.title}</h2>
+                  <p className="max-w-[24ch] leading-snug">{tile.body}</p>
+                  <strong className="text-sm">{tile.meta}</strong>
                 </article>
               ))}
             </div>
           </section>
 
-          <section className="primary-layout">
-            <div className="main-stack">
+          <section className="flex flex-col xl:flex-row gap-5 items-start">
+            <div className="flex flex-col gap-5 flex-1 w-full xl:w-auto">
               <ServerStatus
                 connectedDevices={sessions.length || serverInfo?.connectedDevices || 0}
                 discoveryStatus={serverInfo?.discoveryStatus}
@@ -1005,7 +1005,7 @@ export default function App() {
               />
             </div>
 
-            <aside className="support-stack">
+            <aside className="flex flex-col gap-5 w-full xl:w-[360px] shrink-0">
               <QRCard
                 activeMode={activeQrMode}
                 hostnameReady={hostnamePublished}

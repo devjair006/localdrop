@@ -26,38 +26,42 @@ export default function SettingsPanel({
   serviceName
 }) {
   return (
-    <article className="card details-card">
-      <div className="section-headline compact">
-        <span className="section-kicker">Node details</span>
-        <h2>Nodo local</h2>
-        <p>Direccionamiento, alias LAN y carpeta de salida.</p>
+    <article className="p-5 md:p-6 rounded-[26px] bg-[#1a1214] border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] flex flex-col gap-6 h-full">
+      <div className="flex flex-col gap-1.5">
+        <span className="text-[#ffcf76] text-[0.74rem] tracking-[0.12em] uppercase">Node details</span>
+        <h2 className="text-xl font-bold">Nodo local</h2>
+        <p className="text-[#bdaea0] text-sm leading-relaxed">Direccionamiento, alias LAN y carpeta de salida.</p>
       </div>
 
-      <dl className="details-list">
-        <div>
-          <dt>IP local</dt>
-          <dd>{localIp || "Detectando..."}</dd>
+      <dl className="flex flex-col gap-4 mt-auto m-0 p-0">
+        <div className="flex flex-col gap-1.5 p-4 rounded-[20px] bg-white/5 border border-white/5">
+          <dt className="text-[#a19286] text-xs font-bold tracking-wider uppercase">IP local</dt>
+          <dd className="text-text-main font-medium m-0">{localIp || "Detectando..."}</dd>
         </div>
-        <div>
-          <dt>Puerto</dt>
-          <dd>{port || "3030"}</dd>
+        
+        <div className="flex flex-col gap-1.5 p-4 rounded-[20px] bg-white/5 border border-white/5">
+          <dt className="text-[#a19286] text-xs font-bold tracking-wider uppercase">Puerto</dt>
+          <dd className="text-text-main font-medium m-0">{port || "3030"}</dd>
         </div>
-        <div>
-          <dt>Alias LAN</dt>
-          <dd className="details-dd-stack">
-            <strong className="mono-text">{hostnameUrl || "Pendiente de publicar"}</strong>
-            <span className={`discovery-chip ${hostnameUrl ? "available" : "pending"}`}>
+        
+        <div className="flex flex-col gap-2 p-4 rounded-[20px] bg-white/5 border border-white/5">
+          <dt className="text-[#a19286] text-xs font-bold tracking-wider uppercase">Alias LAN</dt>
+          <dd className="flex items-center justify-between gap-3 m-0">
+            <strong className="font-mono text-sm break-all font-medium text-text-main">{hostnameUrl || "Pendiente de publicar"}</strong>
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider whitespace-nowrap ${hostnameUrl ? "bg-[#4ae4d3]/15 text-[#8ef2ea]" : "bg-white/10 text-[#f3e5d8]"}`}>
               {getDiscoveryCopy(discoveryStatus, Boolean(hostnameUrl))}
             </span>
           </dd>
         </div>
-        <div>
-          <dt>Servicio LAN</dt>
-          <dd>{serviceName || "LocalDrop"}</dd>
+        
+        <div className="flex flex-col gap-1.5 p-4 rounded-[20px] bg-white/5 border border-white/5">
+          <dt className="text-[#a19286] text-xs font-bold tracking-wider uppercase">Servicio LAN</dt>
+          <dd className="text-text-main font-medium m-0">{serviceName || "LocalDrop"}</dd>
         </div>
-        <div>
-          <dt>Carpeta de destino</dt>
-          <dd>{uploadDir || "Preparando carpeta..."}</dd>
+        
+        <div className="flex flex-col gap-1.5 p-4 rounded-[20px] bg-white/5 border border-white/5">
+          <dt className="text-[#a19286] text-xs font-bold tracking-wider uppercase">Carpeta de destino</dt>
+          <dd className="text-text-main text-sm break-all m-0">{uploadDir || "Preparando carpeta..."}</dd>
         </div>
       </dl>
     </article>

@@ -78,12 +78,11 @@ export default function SendToPhone({ serverUrl, pin }) {
   }
 
   return (
-    <section className="card send-to-phone">
-      <div className="card-header">
-        <div>
-          <h2>Enviar al celular</h2>
-          <span>Selecciona archivos para enviarlos al telefono vinculado</span>
-        </div>
+    <section className="p-5 md:p-6 rounded-[26px] bg-[#1a1214] border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] flex flex-col gap-5">
+      <div className="flex flex-col gap-1">
+        <span className="text-[#ffcf76] text-[0.74rem] tracking-[0.12em] uppercase">Envio · Carga HTTP directa</span>
+        <h2 className="text-xl font-bold">Enviar al celular</h2>
+        <span className="text-[#a19286] leading-relaxed">Selecciona archivos para enviarlos al telefono vinculado</span>
       </div>
 
       <input
@@ -94,9 +93,9 @@ export default function SendToPhone({ serverUrl, pin }) {
         onChange={handleFilesChange}
       />
 
-      <div className="empty-state">
+      <div className="flex justify-center p-6 rounded-2xl border border-dashed border-white/10 bg-white/5">
         <button
-          className="primary-button"
+          className="px-5 py-3 rounded-xl bg-gradient-to-br from-[#ffe06b] to-[#58efce] text-[#170d07] font-bold disabled:opacity-60 disabled:cursor-not-allowed transition-transform hover:-translate-y-px"
           onClick={handleSelectFiles}
           disabled={isSending || !pin}
           type="button"
@@ -106,14 +105,14 @@ export default function SendToPhone({ serverUrl, pin }) {
       </div>
 
       {status && (
-        <div className="send-status">
-          <div className="progress-wrap">
+        <div className="flex flex-col gap-2 mt-2">
+          <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
             <div
-              className="progress-bar"
-              style={{ width: `${progress}%`, transition: "width 0.2s ease" }}
+              className="h-full bg-primary-gold transition-all duration-200"
+              style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="status">{status}</p>
+          <p className="text-sm text-[#a19286] text-center mt-1">{status}</p>
         </div>
       )}
     </section>

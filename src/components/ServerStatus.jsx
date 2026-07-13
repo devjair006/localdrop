@@ -35,46 +35,46 @@ export default function ServerStatus({
   const active = status === "active" && !error;
 
   return (
-    <article className={`status-card ${active ? "active" : "inactive"}`}>
-      <div className="status-pill-row">
-        <div className="status-pill">
-          <strong>{active ? "Servidor activo" : "Servidor inactivo"}</strong>
+    <article className={`p-5 md:p-6 rounded-[26px] bg-[#1a1214] border flex flex-col gap-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${active ? "border-[#4ae4d3]/30" : "border-[#ffcf76]/30"}`}>
+      <div className="flex flex-wrap items-center gap-2">
+        <div className={`px-3 py-1.5 rounded-full text-[0.74rem] tracking-wider uppercase font-bold ${active ? "bg-[#4ae4d3]/15 text-[#8ef2ea]" : "bg-[#ffcf76]/15 text-[#ffcf76]"}`}>
+          {active ? "Servidor activo" : "Servidor inactivo"}
         </div>
-        <div className={`status-subpill ${hostnameUrl ? "available" : "pending"}`}>
-          <strong>{getDiscoveryLabel(discoveryStatus, Boolean(hostnameUrl))}</strong>
-        </div>
-      </div>
-
-      <div className="status-copy">
-        <h2>{active ? "Centro de control de la red local" : "Esperando servidor local"}</h2>
-        <p>{error || "Comparte por IP o por alias .local segun lo que soporte tu red."}</p>
-      </div>
-
-      <div className="endpoint-grid">
-        <div className="endpoint-card">
-          <span>URL por IP</span>
-          <strong>{ipUrl || "Iniciando..."}</strong>
-        </div>
-        <div className={`endpoint-card ${hostnameUrl ? "" : "muted"}`}>
-          <span>Alias .local</span>
-          <strong>{hostnameUrl || "Pendiente de publicar"}</strong>
-          <small>{serviceName || "LocalDrop"}</small>
+        <div className={`px-3 py-1.5 rounded-full text-[0.74rem] tracking-wider uppercase font-bold ${hostnameUrl ? "bg-white/10 text-text-main" : "bg-white/5 text-text-muted"}`}>
+          {getDiscoveryLabel(discoveryStatus, Boolean(hostnameUrl))}
         </div>
       </div>
 
-      <div className="live-status">
-        <span>
+      <div className="flex flex-col gap-1">
+        <h2 className="text-xl md:text-2xl font-bold">{active ? "Centro de control de la red local" : "Esperando servidor local"}</h2>
+        <p className="text-text-muted leading-relaxed">{error || "Comparte por IP o por alias .local segun lo que soporte tu red."}</p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-2 p-4 md:p-5 rounded-2xl bg-black/20 border border-white/5 min-w-0">
+          <span className="text-[#a19286] text-sm uppercase tracking-wider">URL por IP</span>
+          <strong className="text-text-main truncate text-lg">{ipUrl || "Iniciando..."}</strong>
+        </div>
+        <div className={`flex flex-col gap-2 p-4 md:p-5 rounded-2xl bg-black/20 border border-white/5 min-w-0 ${hostnameUrl ? "" : "opacity-60"}`}>
+          <span className="text-[#a19286] text-sm uppercase tracking-wider">Alias .local</span>
+          <strong className="text-text-main truncate text-lg">{hostnameUrl || "Pendiente de publicar"}</strong>
+          <small className="text-[#a19286] text-sm truncate">{serviceName || "LocalDrop"}</small>
+        </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 md:p-5 rounded-2xl bg-[#ff7248]/10 border border-[#ff7248]/20 text-[#ffb6a1] min-w-0">
+        <span className="text-sm min-w-0 sm:shrink-0">
           {connectedDevices
             ? `${connectedDevices} sesion(es) movil(es) conectada(s)`
             : "Sin sesiones moviles conectadas"}
         </span>
-        <strong>{liveMessage || "Esperando que un celular abra el enlace"}</strong>
+        <strong className="text-sm truncate max-w-full sm:max-w-[55%] min-w-0 text-left sm:text-right">{liveMessage || "Esperando que un celular abra el enlace"}</strong>
       </div>
 
-      <div className="pin-block">
-        <span>PIN temporal</span>
-        <div className="pin-number">
-          <strong className="pin-code">{pin || "-- ----"}</strong>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 md:p-5 rounded-2xl bg-white/5">
+        <span className="text-[#a19286]">PIN temporal</span>
+        <div className="px-4 py-2 rounded-xl bg-black/40 border border-white/5">
+          <strong className="font-display tracking-[0.2em] text-xl md:text-2xl text-primary-gold">{pin || "-- ----"}</strong>
         </div>
       </div>
     </article>

@@ -410,19 +410,19 @@ function OutboundTransferSection({
           : "La seleccion de archivos se hace con el dialogo nativo del sistema.";
 
   return (
-    <section className="card outbound-card">
-      <div className="section-headline">
-        <span className="section-kicker">Desktop to mobile</span>
-        <h2>Enviar al celular</h2>
-        <p>Prepara una descarga para una sesion movil activa con un flujo claro y manual.</p>
+    <section className="p-5 md:p-6 rounded-[26px] bg-[#1a1214] border border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
+        <span className="text-[#ffcf76] text-[0.74rem] tracking-[0.12em] uppercase">Envio · Relay por sesion</span>
+        <h2 className="text-2xl font-bold">Enviar al celular</h2>
+        <p className="text-[#bdaea0] leading-relaxed">Prepara una descarga para una sesion movil activa con un flujo claro y manual.</p>
       </div>
 
-      <div className="card-header">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
         <div>
-          <span>Sesion de destino</span>
+          <span className="text-[#a19286] font-semibold text-sm">Sesion de destino</span>
         </div>
         <button
-          className="primary-button"
+          className="px-4 py-3 rounded-xl bg-gradient-to-br from-[#ffe06b] to-[#58efce] text-[#170d07] font-bold disabled:opacity-60 disabled:cursor-not-allowed transition-transform hover:-translate-y-px"
           disabled={!canSubmit}
           onClick={onCreateTransfer}
           type="button"
@@ -431,65 +431,75 @@ function OutboundTransferSection({
         </button>
       </div>
 
-      <div className="outbound-layout">
-        <div className="outbound-controls">
-          <label className="field-label" htmlFor="session-selector">
+      <div className="flex flex-col lg:flex-row gap-5">
+        <div className="flex flex-col gap-4 flex-1 min-w-0">
+          <label className="text-[#f2e1d0] text-sm font-bold tracking-wider uppercase" htmlFor="session-selector">
             Celular destino
           </label>
 
           {sessions.length > 1 ? (
             <select
-              className="session-select"
+              className="w-full p-3.5 rounded-2xl border border-white/5 bg-white/5 text-text-main focus:outline-none focus:ring-2 focus:ring-[#ffe06b]/50"
               id="session-selector"
               onChange={(event) => onSessionChange(event.target.value)}
               value={selectedSessionId}
             >
               <option value="">Selecciona una sesion activa</option>
               {sessions.map((session) => (
-                <option key={session.sessionId} value={session.sessionId}>
+                <option key={session.sessionId} value={session.sessionId} className="bg-brand-dark">
                   {session.deviceName} - {session.shortSessionId}
                 </option>
               ))}
             </select>
           ) : hasSessions ? (
-            <div className="session-inline">
-              <div>
-                <strong>{selectedSession?.deviceName || sessions[0].deviceName}</strong>
-                <span>{selectedSession?.shortSessionId || sessions[0].shortSessionId}</span>
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 gap-4">
+              <div className="flex flex-col gap-1 min-w-0">
+                <strong className="truncate">{selectedSession?.deviceName || sessions[0].deviceName}</strong>
+                <span className="text-[#a19286] text-sm">{selectedSession?.shortSessionId || sessions[0].shortSessionId}</span>
               </div>
-              <span className="session-state-badge">
+              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs tracking-wide bg-white/10 text-[#f3e5d8] shrink-0">
                 {getSessionStateLabel(selectedSession?.downloadState || sessions[0].downloadState)}
               </span>
             </div>
           ) : (
-            <div className="session-empty">No hay sesiones moviles conectadas.</div>
+            <div className="flex items-center p-4 rounded-2xl bg-white/5 text-[#a19286]">No hay sesiones moviles conectadas.</div>
           )}
 
           {selectedSession ? (
-            <p className="session-meta">
+            <p className="text-[#a19286] text-sm">
               Estado: {getSessionStateLabel(selectedSession.downloadState)} - Ultima actividad:{" "}
               {formatDateTime(selectedSession.lastSeen)}
             </p>
           ) : hasSessions && !selectedSessionId ? (
-            <p className="session-meta">Seleccion manual requerida porque hay varias sesiones conectadas.</p>
+            <p className="text-[#a19286] text-sm">Seleccion manual requerida porque hay varias sesiones conectadas.</p>
           ) : null}
 
-          <p className={`helper-text ${outboundError ? "error-text" : ""}`}>{helperMessage}</p>
+          <p className={`text-sm ${outboundError ? "text-[#ffb5b5]" : "text-[#a19286]"}`}>{helperMessage}</p>
         </div>
 
-        <div className={`outbound-status-card tone-${tone}`}>
-          <div className="status-header-row">
-            <div>
-              <span className={`status-tag status-tag--${tone}`}>
+        <div className={`flex-1 p-5 rounded-[22px] border bg-white/5 flex flex-col gap-4 min-w-0 ${
+          tone === 'success' ? 'border-[#4ae4d3]/20 bg-[#4ae4d3]/10' :
+          tone === 'danger' ? 'border-[#ff7474]/20 bg-[#ff7474]/10' :
+          tone === 'accent' ? 'border-[#ffd56d]/20 bg-[#ffd56d]/10' :
+          'border-white/10'
+        }`}>
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+            <div className="min-w-0">
+              <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs tracking-wide ${
+                tone === 'success' ? 'bg-[#4ae4d3]/15 text-[#8ef2ea]' :
+                tone === 'danger' ? 'bg-[#ff7474]/20 text-[#ffb5b5]' :
+                tone === 'accent' ? 'bg-[#ffd56d]/20 text-[#ffe28a]' :
+                'bg-white/10 text-[#f3e5d8]'
+              }`}>
                 {getTransferStatusText(transfer?.status || "idle")}
               </span>
-              <h3>{getTransferHeadline(transfer)}</h3>
+              <h3 className="mt-3 text-lg leading-tight font-bold truncate">{getTransferHeadline(transfer)}</h3>
             </div>
 
             {transferSession ? (
-              <div className="transfer-target">
-                <span>Destino</span>
-                <strong>
+              <div className="flex flex-col text-left sm:text-right shrink-0 min-w-0">
+                <span className="text-[#a19286] text-sm">Destino</span>
+                <strong className="text-text-main truncate max-w-[200px] min-w-0">
                   {transferSession.deviceName} - {transferSession.shortSessionId}
                 </strong>
               </div>
@@ -498,32 +508,32 @@ function OutboundTransferSection({
 
           {transfer ? (
             <>
-              <div className="transfer-stats">
-                <div className="transfer-stat">
-                  <span>Archivos</span>
-                  <strong>{transfer.totalFiles || 0}</strong>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="flex flex-col gap-1.5 p-3.5 rounded-2xl bg-black/15">
+                  <span className="text-[#a19286] text-sm">Archivos</span>
+                  <strong className="text-text-main truncate">{transfer.totalFiles || 0}</strong>
                 </div>
-                <div className="transfer-stat">
-                  <span>Tamano total</span>
-                  <strong>{formatBytes(transfer.totalSize)}</strong>
+                <div className="flex flex-col gap-1.5 p-3.5 rounded-2xl bg-black/15">
+                  <span className="text-[#a19286] text-sm">Tamano total</span>
+                  <strong className="text-text-main truncate">{formatBytes(transfer.totalSize)}</strong>
                 </div>
-                <div className="transfer-stat">
-                  <span>Vigencia</span>
-                  <strong>{transfer.expiresAt ? formatRelativeTime(transfer.expiresAt) : "Sin limite visible"}</strong>
+                <div className="flex flex-col gap-1.5 p-3.5 rounded-2xl bg-black/15">
+                  <span className="text-[#a19286] text-sm">Vigencia</span>
+                  <strong className="text-text-main truncate">{transfer.expiresAt ? formatRelativeTime(transfer.expiresAt) : "Sin limite"}</strong>
                 </div>
               </div>
 
-              <div className="transfer-notes">
-                <span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
+                <span className="text-[#a19286]">
                   {transfer.createdAt
                     ? `Creada ${formatRelativeTime(transfer.createdAt)}`
                     : "Esperando accion explicita en el celular"}
                 </span>
-                {transfer.reason ? <strong>{getClearReasonText(transfer.reason)}</strong> : null}
+                {transfer.reason ? <strong className="text-text-main max-w-full sm:max-w-[50%] truncate">{getClearReasonText(transfer.reason)}</strong> : null}
               </div>
             </>
           ) : (
-            <div className="transfer-empty">
+            <div className="p-6 rounded-2xl bg-white/5 text-[#a19286] text-center text-sm">
               Selecciona un celular conectado y pulsa "Seleccionar archivos" para ofrecer una descarga.
             </div>
           )}
@@ -920,8 +930,8 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell">
-      <aside className="app-rail">
+    <div className="h-screen w-full flex overflow-hidden bg-brand-accent p-3 md:p-5 md:gap-4 text-text-main">
+      <aside className="hidden md:flex flex-col justify-between shrink-0 w-[212px] p-7 rounded-[30px] bg-brand-rail text-text-soft shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
         <div>
           <div className="rail-brand">
             <span className="rail-dot" />
@@ -944,33 +954,50 @@ export default function App() {
         </div>
       </aside>
 
-      <div className="content-shell">
+      <div className="flex-1 flex flex-col min-w-0 rounded-[24px] md:rounded-[34px] bg-brand-dark shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_24px_64px_rgba(27,14,8,0.24)] overflow-hidden relative">
         <TitleBar />
-        <main className="shell">
-          <section className="hero-board">
-            <div className="hero-copy-block">
-              <span className="eyebrow">Transferencia local sin cuentas</span>
-              <h1 className="title">Un relay visual para compartir por WiFi.</h1>
-              <p className="hero-copy">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 pb-6 flex flex-col gap-5 min-w-0">
+          <section className="flex flex-col xl:flex-row xl:items-center items-stretch gap-6">
+            <div className="flex-1 p-5 md:pt-4 md:px-2 md:pb-2">
+              <span className="inline-flex px-3 py-2 rounded-full bg-white/10 text-primary-gold text-[0.78rem] tracking-widest uppercase">Transferencia local sin cuentas</span>
+              <h1 className="mt-5 text-[clamp(2.8rem,4vw,5rem)] leading-[0.92] text-[#fff6ea] font-display max-w-[9ch]">Un relay visual para compartir por WiFi.</h1>
+              <p className="max-w-[54ch] mt-5 text-text-muted text-[1.02rem] leading-relaxed tracking-wide">
                 LocalDrop convierte tu laptop en un panel de intercambio con QR, PIN temporal,
                 sesiones vivas y descargas directas al celular con una estetica editorial.
               </p>
             </div>
 
-            <div className="feature-grid">
-              {featureTiles.map((tile) => (
-                <article className={`feature-tile tone-${tile.tone}`} key={tile.id}>
-                  <span>{tile.eyebrow}</span>
-                  <h2>{tile.title}</h2>
-                  <p>{tile.body}</p>
-                  <strong>{tile.meta}</strong>
+            <div className="flex-[1.25] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 tiles-group">
+              {featureTiles.map((tile, index) => (
+                <article
+                  className={`mode-tile tone-${tile.tone} flex flex-col justify-between min-h-[200px] gap-4 p-6 rounded-[28px] text-[#150b08] min-w-0`}
+                  key={tile.id}
+                >
+                  <div className="mode-tile__header flex items-start justify-between gap-3 w-full">
+                    <span className="mode-tile__index shrink-0">{String(index + 1).padStart(2, "0")}</span>
+                    <span className="mode-tile__eyebrow shrink min-w-0 text-center">{tile.eyebrow}</span>
+                  </div>
+
+                  <div className="mode-tile__details">
+                    <div className="flex flex-col gap-2 min-w-0 text-center items-center justify-center flex-1 my-2">
+                      <h2 className="mode-tile__title break-words">{tile.title}</h2>
+                      <p className="mode-tile__body break-words">{tile.body}</p>
+                    </div>
+                  </div>
+
+                  <div className="mode-tile__meta">
+                    <div className="flex items-center justify-center gap-2 w-full">
+                      <span className="mode-tile__dot" />
+                      <strong className="break-words">{tile.meta}</strong>
+                    </div>
+                  </div>
                 </article>
               ))}
             </div>
           </section>
 
-          <section className="primary-layout">
-            <div className="main-stack">
+          <section className="flex flex-col xl:flex-row gap-5 items-start">
+            <div className="flex flex-col gap-5 flex-1 w-full xl:w-auto">
               <ServerStatus
                 connectedDevices={sessions.length || serverInfo?.connectedDevices || 0}
                 discoveryStatus={serverInfo?.discoveryStatus}
@@ -1005,7 +1032,7 @@ export default function App() {
               />
             </div>
 
-            <aside className="support-stack">
+            <aside className="flex flex-col gap-5 w-full xl:w-[360px] shrink-0">
               <QRCard
                 activeMode={activeQrMode}
                 hostnameReady={hostnamePublished}

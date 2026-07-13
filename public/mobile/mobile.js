@@ -490,7 +490,6 @@ socket.on("server:snapshot", (snapshot = {}) => {
     renderSharedFiles(snapshot.sharedFiles);
   }
 });
-});
 
 socket.on("presence:ack", async ({ deviceName, sessionId } = {}) => {
   state.deviceName = deviceName || "dispositivo movil";

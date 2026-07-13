@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   color-scheme: dark;
   font-family: "Segoe UI", "Outfit", sans-serif;
@@ -226,15 +230,404 @@ h1 {
 }
 
 .tone-gold {
-  background: linear-gradient(135deg, #ffd863, #f4b92f);
+  background: linear-gradient(135deg, #ffd760 0%, #f7c33a 50%, #d89610 100%);
 }
 
 .tone-orange {
-  background: linear-gradient(135deg, #ff9f47, #ff6734);
+  background: linear-gradient(135deg, #ff9f57 0%, #ff7632 50%, #e24915 100%);
 }
 
 .tone-cyan {
-  background: linear-gradient(135deg, #4be4d4, #23bfd4);
+  background: linear-gradient(135deg, #4efceb 0%, #2dcbd3 50%, #158baf 100%);
+}
+
+.mode-tile {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.45),
+    inset 0 -30px 50px rgba(0, 0, 0, 0.15),
+    0 15px 35px rgba(20, 8, 4, 0.25);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.mode-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1) 50%, rgba(0, 0, 0, 0.3));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.3s ease;
+}
+
+.mode-tile::after {
+  content: "";
+  position: absolute;
+  top: -45%;
+  right: -25%;
+  width: 75%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5), transparent 60%);
+  filter: blur(15px);
+  pointer-events: none;
+  z-index: 0;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.mode-tile:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.6),
+    inset 0 -40px 60px rgba(0, 0, 0, 0.15),
+    0 30px 60px rgba(20, 8, 4, 0.35);
+}
+
+.mode-tile:hover::after {
+  transform: translate(-10%, 10%) scale(1.1);
+}
+
+/* Group hover interactions */
+.tiles-group:hover .mode-tile {
+  opacity: 0.5;
+  filter: saturate(0.7);
+  transform: scale(0.98);
+}
+
+.tiles-group .mode-tile:hover {
+  opacity: 1;
+  filter: saturate(1.1);
+  transform: translateY(-6px) scale(1.05);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.6),
+    inset 0 -40px 60px rgba(0, 0, 0, 0.2),
+    0 30px 60px rgba(20, 8, 4, 0.45);
+  z-index: 10;
+}
+
+/* At lg+ the three tiles sit in a row: hovering one expands horizontally
+   to fill most of the row while the other two stay visible as narrow slivers.
+   The row keeps its original height and width, so only the horizontal layout
+   changes. By default only the header (eyebrow + index) is shown; the rest
+   reveals itself once the tile is hovered. */
+@media (min-width: 1024px) {
+  .tiles-group {
+    display: flex;
+    gap: 20px;
+    height: 200px;
+    transition: gap 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .tiles-group > .mode-tile {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 100%;
+    gap: 0;
+    transform: none;
+    transition:
+      flex 0.45s cubic-bezier(0.25, 0.8, 0.25, 1),
+      opacity 0.35s ease,
+      filter 0.35s ease,
+      box-shadow 0.3s ease,
+      gap 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .tiles-group > .mode-tile .mode-tile__header {
+    width: 100%;
+    transition: margin 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  /* Default (no hover): index in top-right, eyebrow lower and full-width */
+  .tiles-group:not(:hover) > .mode-tile {
+    justify-content: flex-start;
+  }
+
+  .tiles-group:not(:hover) > .mode-tile .mode-tile__header {
+    display: block;
+    margin: 0;
+    width: 100%;
+  }
+
+  .tiles-group:not(:hover) > .mode-tile .mode-tile__index {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    margin: 0;
+    z-index: 3;
+  }
+
+  .tiles-group:not(:hover) > .mode-tile .mode-tile__eyebrow {
+    display: flex;
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 52px;
+    padding: 8px 10px;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    line-height: 1.35;
+    text-align: center;
+    word-break: normal;
+    overflow-wrap: break-word;
+    hyphens: none;
+  }
+
+  .tiles-group > .mode-tile .mode-tile__details,
+  .tiles-group > .mode-tile .mode-tile__meta {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .tiles-group > .mode-tile .mode-tile__meta > div {
+    padding-top: 0;
+    border-top-color: transparent;
+  }
+
+  .tiles-group:hover {
+    gap: 8px;
+  }
+
+  .tiles-group:hover > .mode-tile:not(:hover) {
+    flex: 0 0 44px;
+    min-width: 44px;
+    opacity: 0.88;
+    filter: saturate(0.8);
+    transform: none;
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .tiles-group:hover > .mode-tile:not(:hover) .mode-tile__header {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    gap: 0;
+  }
+
+  .tiles-group:hover > .mode-tile:not(:hover) .mode-tile__eyebrow {
+    display: none;
+  }
+
+  .tiles-group:hover > .mode-tile:not(:hover) .mode-tile__index {
+    margin: 0;
+    opacity: 0.5;
+    font-size: 0.82rem;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    letter-spacing: 0.12em;
+  }
+
+  .tiles-group > .mode-tile:hover {
+    flex: 1 1 0;
+    min-width: 0;
+    gap: 12px;
+    justify-content: flex-start;
+    opacity: 1;
+    filter: saturate(1.1);
+    transform: none;
+    box-shadow:
+      inset 0 1px 2px rgba(255, 255, 255, 0.6),
+      inset 0 -40px 60px rgba(0, 0, 0, 0.2),
+      0 30px 60px rgba(20, 8, 4, 0.45);
+    z-index: 10;
+  }
+
+  .tiles-group > .mode-tile:hover .mode-tile__header {
+    display: flex;
+    margin-top: 0;
+    margin-bottom: 0;
+    flex-shrink: 0;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .tiles-group > .mode-tile:hover .mode-tile__index {
+    position: static;
+    order: 2;
+    margin-left: auto;
+    writing-mode: horizontal-tb;
+    text-orientation: mixed;
+    opacity: 0.45;
+    font-size: 1.05rem;
+    letter-spacing: 0.06em;
+  }
+
+  .tiles-group > .mode-tile:hover .mode-tile__eyebrow {
+    order: 1;
+    width: auto;
+    max-width: calc(100% - 2.5rem);
+    margin-top: 0;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    line-height: normal;
+  }
+
+  .tiles-group > .mode-tile:hover .mode-tile__details,
+  .tiles-group > .mode-tile:hover .mode-tile__meta {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .tiles-group > .mode-tile:hover .mode-tile__details {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+
+  .tiles-group > .mode-tile:hover .mode-tile__details > div {
+    margin: 0;
+    justify-content: center;
+  }
+
+  .tiles-group > .mode-tile:hover .mode-tile__meta {
+    flex-shrink: 0;
+    align-self: stretch;
+  }
+
+  .tiles-group > .mode-tile:hover .mode-tile__meta > div {
+    padding-top: 10px;
+    border-top-color: rgba(18, 9, 9, 0.16);
+  }
+}
+
+.mode-tile > * {
+  position: relative;
+  z-index: 1;
+}
+
+.mode-tile__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-align: center;
+  color: #2a160a;
+  background: rgba(18, 9, 9, 0.16);
+  backdrop-filter: blur(4px);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+.mode-tile__index {
+  font-family: "Arial Black", "Outfit", sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  color: #2a160a;
+  opacity: 0.45;
+}
+
+.mode-tile__title {
+  font-size: clamp(1.1rem, 0.55rem + 1.5vw, 1.45rem);
+  line-height: 1.18;
+  font-weight: 800;
+  font-family: "Arial Black", "Outfit", sans-serif;
+  color: #1c0e06;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.mode-tile__body {
+  font-size: 0.92rem;
+  line-height: 1.45;
+  font-weight: 500;
+  color: #2a160a;
+  opacity: 0.82;
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.mode-tile__details {
+  display: grid;
+  grid-template-rows: 1fr;
+  min-width: 0;
+  overflow: hidden;
+  transition:
+    grid-template-rows 0.45s cubic-bezier(0.25, 0.8, 0.25, 1),
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+}
+
+.mode-tile__details > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  min-height: 0;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+.mode-tile__meta {
+  display: grid;
+  grid-template-rows: 1fr;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #2a160a;
+  transition:
+    grid-template-rows 0.45s cubic-bezier(0.25, 0.8, 0.25, 1),
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+}
+
+.mode-tile__meta > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 0;
+  padding-top: 12px;
+  border-top: 1px solid rgba(18, 9, 9, 0.16);
+  overflow: hidden;
+}
+
+.mode-tile__meta strong {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  min-width: 0;
+  text-align: center;
+  line-height: 1.35;
+}
+
+.mode-tile__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  background: #1c0e06;
+  box-shadow: 0 0 0 3px rgba(18, 9, 9, 0.14);
 }
 
 .card,
